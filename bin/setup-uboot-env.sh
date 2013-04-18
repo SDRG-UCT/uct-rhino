@@ -39,7 +39,7 @@ echo "This step will set up the u-boot variables for booting the EVM."
 
 ipdefault=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
-prompt="EVM #"
+prompt="RHINO #"
 
 echo "Autodetected the following ip address of your host, correct it if necessary"
 read -p "[ $ipdefault ] " ip
@@ -62,10 +62,10 @@ else
 fi
 
 uimage="uImage-""$platform"".bin"
-uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/$uimage`
+uimagesrc=`ls -1 $cwd/../firmware/am3517/prebuilt-images/$uimage`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyO2,115200n8 rw noinitrd"
+baseargs="console=ttyO0,115200n8 rw noinitrd"
 videoargs=""
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
 fsnfsargs1="root=/dev/nfs nfsroot="

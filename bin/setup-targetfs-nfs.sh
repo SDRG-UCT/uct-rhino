@@ -33,17 +33,22 @@
 cwd=`dirname $0`
 . $cwd/common.sh
 
-SDKinstall=`grep TI_SDK_PATH= $cwd/../Rules.make | cut -d= -f2`
+SDKinstall=`grep RHINO_SDK_PATH= $cwd/../Rules.make | cut -d= -f2`
 
-dstdefault=$SDKinstall/targetNFS
-
+dstdefault2=$SDKinstall/targetNFS
+dstdefault1=/srv/rhinoNFS
 
 echo "--------------------------------------------------------------------------------"
 echo "In which directory do you want to install the target filesystem?(if this directory does not exist it will be created)"
-read -p "[ $dstdefault ] " dst
+echo "Select an option or type in the directory"
+read -p "[1 $dstdefault1],[2 $dstdefault2 ] " dst 
 
-if [ ! -n "$dst" ]; then
-    dst=$dstdefault
+if [ $dst=1 ]; then
+    dst=$dstdefault1
+else 
+    if [ $dst=2 ]; then
+	dst=$dstdefault2
+    fi
 fi
 echo "--------------------------------------------------------------------------------"
 
@@ -56,7 +61,7 @@ echo "on your host."
 read -p "Press return to continue" REPLY
 
 extract_fs() {
-    fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs*.tar.gz`
+    fstar=`ls -1 $cwd/../filesystem/rhinofs.tar.gz`
     me=`whoami`
     sudo mkdir -p $1
     check_status

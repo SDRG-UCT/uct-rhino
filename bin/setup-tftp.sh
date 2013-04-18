@@ -87,7 +87,7 @@ fi
 
 platform=`cat $cwd/../Rules.make | grep -e "^PLATFORM=" | cut -d= -f2`
 uimage="uImage-""$platform"".bin"
-uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/$uimage`
+uimagesrc=`ls -1 $cwd/../firmware/am3517/prebuilt-images/$uimage`
 if [ -f $tftproot/$uimage ]; then
     echo
     echo "$tftproot/$uimage already exists. The existing installed file can be renamed and saved under the new name."
@@ -142,9 +142,9 @@ fi
 
 echo
 echo "Restarting tftp server"
-sudo /etc/init.d/xinetd stop
+sudo service xinetd stop
 check_status
 sleep 1
-sudo /etc/init.d/xinetd start
+sudo service xinetd start
 check_status
 echo "--------------------------------------------------------------------------------"

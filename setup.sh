@@ -32,13 +32,29 @@
 
 echo
 echo "--------------------------------------------------------------------------------"
-echo "TISDK setup script"
+echo "RHINOSDK setup script"
+echo "Adapted from TISDK setup script -> www.ti.com"
 echo
 echo "This script will set up your development host for SDK development."
 echo "Parts of this script require administrator priviliges (sudo access)."
 echo "--------------------------------------------------------------------------------"
 
+rootdirdefault=$PWD
 cwd=`dirname $0`
+
+echo
+echo "--------------------------------------------------------------------------------"
+echo "Which directory do you want to use as your RHINO_SDK_PATH(if this directory does not exist it will be created)"
+read -p "[ $rootdirdefault ] " rdir
+
+if [ ! -n "$rdir" ]; then
+    rdir=$rootdirdefault
+fi
+
+sed -i "s=export RHINO_SDK_PATH\=.*$=export RHINO_SDK_PATH\=$rdir=g" $cwd/Rules.make
+
+echo "--------------------------------------------------------------------------------"
+
 . $cwd/bin/common.sh
 
 $cwd/bin/setup-host-check.sh
@@ -63,6 +79,5 @@ $cwd/bin/setup-uboot-env.sh
 check_status
 
 echo
-echo "TISDK setup completed!"
-echo "Please continue reading the Software Developer's Guide for more information on"
-echo "how to develop software on the EVM"
+echo "RHINOSDK setup completed!"
+echo "http://www.sdrg.ee.uct.ac.za/"

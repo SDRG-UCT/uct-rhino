@@ -48,13 +48,11 @@ echo "will not recognize this device. Setup will add a udev rule to "
 echo "/etc/udev/ so that from now on it will be recognized as soon as the board is "
 echo "plugged in."
 echo
-echo "For other boards, the serial will defualt to /dev/ttyS0. Please update based "
-echo "on your setup."
-
+echo "RHINO uses /dev/ttyUSB2 by default. Please update if need be."
 echo "--------------------------------------------------------------------------------"
 echo
 
-portdefault=/dev/ttyS0
+portdefault=/dev/ttyUSB2
 
 echo ""
 echo "NOTE: For boards with a built-in USB to Serial adapter please press"
