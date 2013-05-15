@@ -6,6 +6,7 @@ ARCH=armv7a
 
 #u-boot machine
 UBOOT_MACHINE=rhino_config
+#UBOOT_MACHINE=am3517_evm_config
 
 #Points to the root of the RHINO SDK
 export RHINO_SDK_PATH=__RHINO_SDK_PATH__
@@ -27,5 +28,8 @@ export CC=$(CROSS_COMPILE)gcc
 #Location of environment-setup file
 export ENV_SETUP=$(LINUX_DEVKIT_PATH)/environment-setup
 
+#Location of build Directory
+export BUILD_DIR=$(RHINO_SDK_PATH)/tmp/build
+
 #The directory that points to the SDK kernel source tree
-LINUXKERNEL_INSTALL_DIR=$(RHINO_SDK_PATH)/board-support/linux-2.6.37-psp04.02.00.07
+LINUXKERNEL_INSTALL_DIR=$(RHINO_SDK_PATH)/firmware/am3517/os/borph

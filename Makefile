@@ -1,32 +1,34 @@
 -include Rules.make
 
-all: linux matrix-gui arm-benchmarks am-sysinfo matrix-gui-browser refresh-screen qt-tstat u-boot-spl quick-playground av-examples ti-ocf-crypto-module 
-clean: linux_clean matrix-gui_clean arm-benchmarks_clean am-sysinfo_clean matrix-gui-browser_clean refresh-screen_clean qt-tstat_clean u-boot-spl_clean quick-playground_clean av-examples_clean ti-ocf-crypto-module_clean 
-install: linux_install matrix-gui_install arm-benchmarks_install am-sysinfo_install matrix-gui-browser_install refresh-screen_install qt-tstat_install u-boot-spl_install quick-playground_install av-examples_install ti-ocf-crypto-module_install 
+all: linux u-boot-spl 
+clean: linux_clean u-boot-spl_clean 
+install: linux_install u-boot-spl_install 
 # Kernel build targets
 linux:
 	@echo =================================
 	@echo     Building the Linux Kernel
 	@echo =================================
-	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) tisdk_$(PLATFORM)_defconfig
-	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) uImage
-	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) modules
+	@-[-d $(BUILD_DIR)/linux] && echo 'Directory $(BUILD_DIR)/linux exists' || mkdir -p $(BUILD_DIR)/linux
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) O=$(BUILD_DIR)/linux rhino_defconfig
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) O=$(BUILD_DIR)/linux uImage
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) O=$(BUILD_DIR)/linux modules
 
 linux_install:
 	@echo ===================================
 	@echo     Installing the Linux Kernel
 	@echo ===================================
 	install -d $(DESTDIR)/boot
-	install $(LINUXKERNEL_INSTALL_DIR)/arch/arm/boot/uImage $(DESTDIR)/boot
-	install $(LINUXKERNEL_INSTALL_DIR)/vmlinux $(DESTDIR)/boot
-	install $(LINUXKERNEL_INSTALL_DIR)/System.map $(DESTDIR)/boot
-	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) INSTALL_MOD_PATH=$(DESTDIR) modules_install
+	install $(BUILD_DIR)/linux/arch/arm/boot/uImage $(DESTDIR)/boot
+	install $(BUILD_DIR)/linux/vmlinux $(DESTDIR)/boot
+	install $(BUILD_DIR)/linux/System.map $(DESTDIR)/boot
+#	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) INSTALL_MOD_PATH=$(DESTDIR) modules_install
 
 linux_clean:
 	@echo =================================
 	@echo     Cleaning the Linux Kernel
 	@echo =================================
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) mrproper
+	@-[ ! -d $(BUILD_DIR)/linux ] && echo 'Directory $(BUILD_DIR)/linux does not exist' || rm -r $(BUILD_DIR)/linux
 # Make Rules for matrix-gui project
 matrix-gui:
 	@echo =============================
@@ -171,17 +173,27 @@ u-boot-spl_clean: u-boot_clean
 u-boot-spl_install: u-boot_install
 
 u-boot:
-	$(MAKE) -C $(TI_SDK_PATH)/board-support/u-boot-* CROSS_COMPILE=$(CROSS_COMPILE) $(UBOOT_MACHINE)
-	$(MAKE) -C $(TI_SDK_PATH)/board-support/u-boot-* CROSS_COMPILE=$(CROSS_COMPILE)
+	@echo =================================
+	@echo       Building u-boot
+	@echo =================================
+	$(MAKE) -C $(RHINO_SDK_PATH)/firmware/am3517/u-boot CROSS_COMPILE=$(CROSS_COMPILE) O=$(BUILD_DIR)/u-boot $(UBOOT_MACHINE)
+	$(MAKE) -C $(RHINO_SDK_PATH)/firmware/am3517/u-boot CROSS_COMPILE=$(CROSS_COMPILE) O=$(BUILD_DIR)/u-boot
 
 u-boot_clean:
-	$(MAKE) -C $(TI_SDK_PATH)/board-support/u-boot-* CROSS_COMPILE=$(CROSS_COMPILE) clean
+	@echo =================================
+	@echo       Cleaning u-boot
+	@echo =================================
+	$(MAKE) -C $(RHINO_SDK_PATH)/firmware/am3517/u-boot CROSS_COMPILE=$(CROSS_COMPILE) clean
+	@-[ ! -d $(BUILD_DIR)/u-boot ] && echo 'Directory $(BUILD_DIR)/u-boot does not exist' || rm -r $(BUILD_DIR)/u-boot
 
 u-boot_install:
+	@echo =================================
+	@echo       Installing u-boot
+	@echo =================================
 	install -d $(DESTDIR)/boot
-	install $(TI_SDK_PATH)/board-support/u-boot-*/u-boot.img $(DESTDIR)/boot
-	install $(TI_SDK_PATH)/board-support/u-boot-*/MLO $(DESTDIR)/boot
-	install $(TI_SDK_PATH)/board-support/u-boot-*/u-boot.map $(DESTDIR)/boot
+	install $(BUILD_DIR)/u-boot/u-boot.img $(DESTDIR)/boot
+	install $(BUILD_DIR)/u-boot/MLO $(DESTDIR)/boot
+	install $(BUILD_DIR)/u-boot/u-boot.map $(DESTDIR)/boot
 # Quick Playground build targets
 quick-playground:
 	@echo =================================
