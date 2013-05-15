@@ -1,0 +1,6 @@
+[submodule "firmware/am3517/os"]
+	path = firmware/am3517/os
+	url = https://github.com/SDRG-UCT/rhino.git
+[submodule "firmware/am3517/u-boot"]
+	path = firmware/am3517/u-boot
+	url = https://github.com/SDRG-UCT/u-boot_rhino.git
