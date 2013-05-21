@@ -86,8 +86,10 @@ else
 fi
 
 platform=`cat $cwd/../Rules.make | grep -e "^PLATFORM=" | cut -d= -f2`
-uimage="uImage-""$platform"".bin"
-uimagesrc=`ls -1 $cwd/../firmware/am3517/prebuilt-images/$uimage`
+uimage="uImage"
+uboot="u-boot.img"
+mlo="MLO"
+imagedir=$cwd/../firmware/am3517/prebuilt-stable/
 if [ -f $tftproot/$uimage ]; then
     echo
     echo "$tftproot/$uimage already exists. The existing installed file can be renamed and saved under the new name."
@@ -96,7 +98,7 @@ if [ -f $tftproot/$uimage ]; then
     case "$exists" in
       s) echo "Skipping copy of $uimage, existing version will be used"
          ;;
-      o) sudo cp $uimagesrc $tftproot
+      o) sudo cp $imagedir/$uimage $tftproot
          check_status
          echo
          echo "Successfully overwritten $uimage in tftp root directory $tftproot"
@@ -109,18 +111,87 @@ if [ -f $tftproot/$uimage ]; then
          fi
          sudo mv "$tftproot/$uimage" "$tftproot/$newname"
          check_status
-         sudo cp $uimagesrc $tftproot
+         sudo cp $imagedir/$uimage $tftproot
          check_status
          echo
          echo "Successfully copied $uimage to tftp root directory $tftproot as $newname"
          ;;
     esac
 else
-    sudo cp $uimagesrc $tftproot
+    sudo cp $imagedir/$uimage $tftproot
     check_status
     echo
     echo "Successfully copied $uimage to tftp root directory $tftproot"
 fi
+
+if [ -f $tftproot/$uboot ]; then
+    echo
+    echo "$tftproot/$uboot already exists. The existing installed file can be renamed and saved under the new name."
+    echo "(r) rename (o) overwrite (s) skip copy "
+    read -p "[r] " exists
+    case "$exists" in
+      s) echo "Skipping copy of $uboot, existing version will be used"
+         ;;
+      o) sudo cp $imagedir/$uboot $tftproot
+         check_status
+         echo
+         echo "Successfully overwritten $uboot in tftp root directory $tftproot"
+         ;;
+      *) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
+         echo "New name for existing u-boot: "
+         read -p "[ $uboot.$dte ]" newname
+         if [ ! -n "$newname" ]; then
+             newname="$uboot.$dte"
+         fi
+         sudo mv "$tftproot/$uboot" "$tftproot/$newname"
+         check_status
+         sudo cp $imagedir/$uboot $tftproot
+         check_status
+         echo
+         echo "Successfully copied $uboot to tftp root directory $tftproot as $newname"
+         ;;
+    esac
+else
+    sudo cp $imagedir/$uboot $tftproot
+    check_status
+    echo
+    echo "Successfully copied $uboot to tftp root directory $tftproot"
+fi
+
+if [ -f $tftproot/$mlo ]; then
+    echo
+    echo "$tftproot/$mlo already exists. The existing installed file can be renamed and saved under the new name."
+    echo "(r) rename (o) overwrite (s) skip copy "
+    read -p "[r] " exists
+    case "$exists" in
+      s) echo "Skipping copy of $mlo, existing version will be used"
+         ;;
+      o) sudo cp $imagedir/$mlo $tftproot
+         check_status
+         echo
+         echo "Successfully overwritten $mlo in tftp root directory $tftproot"
+         ;;
+      *) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
+         echo "New name for existing MLO: "
+         read -p "[ $mlo.$dte ]" newname
+         if [ ! -n "$newname" ]; then
+             newname="$mlo.$dte"
+         fi
+         sudo mv "$tftproot/$mlo" "$tftproot/$newname"
+         check_status
+         sudo cp $imagedir/$mlo $tftproot
+         check_status
+         echo
+         echo "Successfully copied $mlo to tftp root directory $tftproot as $newname"
+         ;;
+    esac
+else
+    sudo cp $imagedir/$mlo $tftproot
+    check_status
+    echo
+    echo "Successfully copied $mlo to tftp root directory $tftproot"
+fi
+
 
 echo
 if [ -f $tftpcfg ]; then

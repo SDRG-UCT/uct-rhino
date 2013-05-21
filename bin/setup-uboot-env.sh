@@ -61,8 +61,8 @@ else
     echo
 fi
 
-uimage="uImage-""$platform"".bin"
-uimagesrc=`ls -1 $cwd/../firmware/am3517/prebuilt-images/$uimage`
+uimage="uImage"
+uimagesrc=`ls -1 $cwd/../firmware/am3517/prebuilt-stable/$uimage`
 uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyO0,115200n8 rw noinitrd"
